@@ -1,0 +1,4 @@
+flask
+Flask-Session
+pyopenssl
+python-ldap

@@ -1,0 +1,20 @@
+<!doctype html>
+<html data-theme="dark">
+<head>
+    <meta charset="utf-8">
+    <meta name="robots" content="noindex, nofollow">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{{ layout.metadata.title }}</title>
+    <meta name="description" content="{{ layout.metadata.description }}">
+    <meta name="author" content="Another LDAP Auth Form-based">
+    <link rel="stylesheet" href="{{ url_for('static', filename='pico.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link href="data:image/x-icon;base64,AAABAAEAEBAQAAEABAAoAQAAFgAAACgAAAAQAAAAIAAAAAEABAAAAAAAgAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD//wAA//8AAP//AADwDwAA8A8AAPAPAADwDwAA8A8AAPAPAADwDwAA+98AAPvfAAD73wAA/D8AAP//AAD//wAA" rel="icon" type="image/x-icon" />
+</head>
+<body>
+    {% block content %}{% endblock %}
+    <footer class="container-fluid">
+        <small>{{ layout.metadata.footer }} • Picture by <a href="https://unsplash.com/photos/5cwigXmGWTo" class="secondary">Ivan Bandura</a></small>
+    </footer>
+</body>
+</html>
