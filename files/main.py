@@ -17,8 +17,8 @@ bruteForce = BruteForce()
 
 # --- Logging -----------------------------------------------------------------
 logs = Logs('main')
-# logging.getLogger('werkzeug').setLevel(logging.ERROR) # Flask log level to ERROR
-# environ['WERKZEUG_RUN_MAIN'] = 'true'
+logging.getLogger('werkzeug').setLevel(logging.ERROR) # Flask log level to ERROR
+environ['WERKZEUG_RUN_MAIN'] = 'true'
 
 # --- Flask -------------------------------------------------------------------
 app = Flask(__name__)
@@ -166,6 +166,6 @@ def remove_header(response):
 
 if __name__ == '__main__':
     if param.get('ENABLE_HTTPS', False, bool):
-        app.run(host='0.0.0.0', port=9000, debug=True, ssl_context='adhoc')
+        app.run(host='0.0.0.0', port=9000, debug=False, ssl_context='adhoc')
     else:
-        app.run(host='0.0.0.0', port=9000, debug=True)
+        app.run(host='0.0.0.0', port=9000, debug=False)
