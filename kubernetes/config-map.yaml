@@ -1,0 +1,19 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: another-ldap
+  namespace: another
+data:
+  ENABLE_HTTPS: "True"
+  LDAP_ENDPOINT: "ldaps://testmyldap.com:636"
+  LDAP_MANAGER_DN_USERNAME: "CN=john,OU=Administrators,DC=TESTMYLDAP,DC=COM"
+  LDAP_BIND_DN: "{username}@TESTMYLDAP.com"
+  LDAP_SEARCH_BASE: "DC=TESTMYLDAP,DC=COM"
+  LDAP_SEARCH_FILTER: "(sAMAccountName={username})"
+  LOG_LEVEL: "DEBUG"
+  LOG_FORMAT: "JSON"
+  BRUTE_FORCE_PROTECTION: "False"
+  BRUTE_FORCE_EXPIRATION: "5"
+  BRUTE_FORCE_FAILURES: "3"
+  COOKIE_DOMAIN: ""

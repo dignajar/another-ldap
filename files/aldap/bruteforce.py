@@ -12,8 +12,8 @@ class BruteForce:
 
         self.database = {}
         self.enabled = self.param.get('BRUTE_FORCE_PROTECTION', False, bool)
-        self.expirationSeconds = self.param.get('BRUTE_FORCE_EXPIRATION', 10)
-        self.blockAfterFailures = self.param.get('BRUTE_FORCE_FAILURES', 3)
+        self.expirationSeconds = self.param.get('BRUTE_FORCE_EXPIRATION', 10, int)
+        self.blockAfterFailures = self.param.get('BRUTE_FORCE_FAILURES', 3, int)
 
     def addFailure(self):
         '''

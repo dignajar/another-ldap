@@ -5,15 +5,25 @@
         {% if layout.alert %}<div class="alert">{{ layout.alert }}</div>{% endif %}
         <article class="grid">
             <div>
-                <hgroup>
-                    <h1>Sign in</h1>
-                    <h2>{{ layout.metadata.title }}</h2>
-                </hgroup>
-                <form action="/login?callback={{ layout.callback }}" method="POST">
-                    <input type="text" name="username" placeholder="Username" aria-label="Username" autocomplete="username" required>
-                    <input type="password" name="password" placeholder="Password" aria-label="Password" autocomplete="password" required>
-                    <button type="submit" class="contrast">Login</button>
-                </form>
+                {% if layout.authenticated %}
+                    <hgroup>
+                        <h1>Welcome {{ layout.username }}</h1>
+                        <h2>{{ layout.metadata.title }}</h2>
+                    </hgroup>
+                    <form action="/logout" method="POST">
+                        <button type="submit" class="contrast">Logout</button>
+                    </form>
+                {% else %}
+                    <hgroup>
+                        <h1>Sign in</h1>
+                        <h2>{{ layout.metadata.title }}</h2>
+                    </hgroup>
+                    <form action="/login?callback={{ layout.callback }}" method="POST">
+                        <input type="text" name="username" placeholder="Username" aria-label="Username" autocomplete="username" required>
+                        <input type="password" name="password" placeholder="Password" aria-label="Password" autocomplete="password" required>
+                        <button type="submit" class="contrast">Login</button>
+                    </form>
+                {% endif %}
             </div>
             <div style="background-image: url('{{ url_for('static', filename='photo.jpg') }}')"></div>
         </article>

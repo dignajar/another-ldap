@@ -1,0 +1,18 @@
+---
+apiVersion: networking.k8s.io/v1beta1
+kind: Ingress
+metadata:
+  namespace: another
+  name: another-ldap
+  annotations:
+    kubernetes.io/ingress.class: "nginx"
+    nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
+spec:
+  rules:
+  - host: login.testmyldap.com
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: another-ldap
+          servicePort: 443

@@ -1,0 +1,15 @@
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: another-ldap
+  namespace: another
+spec:
+  type: ClusterIP
+  selector:
+    app: another-ldap
+  ports:
+    - name: https
+      port: 443
+      protocol: TCP
+      targetPort: 9000

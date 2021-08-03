@@ -17,8 +17,8 @@ bruteForce = BruteForce()
 
 # --- Logging -----------------------------------------------------------------
 logs = Logs('main')
-logging.getLogger('werkzeug').setLevel(logging.ERROR) # Flask log level to ERROR
-environ['WERKZEUG_RUN_MAIN'] = 'true'
+# logging.getLogger('werkzeug').setLevel(logging.ERROR) # Flask log level to ERROR
+# environ['WERKZEUG_RUN_MAIN'] = 'true'
 
 # --- Flask -------------------------------------------------------------------
 app = Flask(__name__)
@@ -39,52 +39,41 @@ app.config.from_object(__name__)
 Session(app)
 
 # --- Routes ------------------------------------------------------------------
-@app.route('/login', methods=['GET', 'POST'])
+@app.route('/login', methods=['POST'])
 def login():
-    layout = {
-        'callback': '',
-        'alert': '',
-        'metadata': {
-            'title': 'PMI - Data Ocean',
-            'description': '',
-            'footer': 'PSE DevOps Engineers'}
-    }
-
-    if bruteForce.isIpBlocked():
-        layout['alert'] = 'Blocked by Brute Force.'
-        return render_template('login.html', layout=layout)
+    logs.debug({'message':'/login requested.'})
 
     # Get return page to redirect the user after successful login
-    layout['callback'] = request.args.get('callback', default='/', type=str)
+    callback = request.args.get('callback', default='/', type=str)
 
-    if request.method == 'POST':
-        logs.debug({'message':'Form requested.'})
-        username = request.form.get('username', default=None, type=str)
-        password = request.form.get('password', default=None, type=str)
-        if (username is None) or (password is None):
-            layout['alert'] = 'Username or password incorrect.'
-            return render_template('login.html', layout=layout)
+    if bruteForce.isIpBlocked():
+        session['alert'] = 'Username or password incorrect.'
+        return redirect('/?callback='+callback)
 
-        aldap = Aldap()
-        if aldap.authentication(username, password):
-            logs.info({'message':'Form: Authentication successful, creating Session.'})
-            session['username'] = username
-            session['groups'] = aldap.getUserGroups(username)
-            return redirect(layout['callback'])
+    # Get inputs from the form
+    username = request.form.get('username', default=None, type=str)
+    password = request.form.get('password', default=None, type=str)
+    if (username is None) or (password is None):
+        session['alert'] = 'Username or password incorrect.'
+        bruteForce.addFailure()
+        return redirect('/?callback='+callback)
 
-        logs.warning({'message': 'Form: Authentication failed, deleting Session.'})
-        layout['alert'] = 'Username or password incorrect.'
-        try:
-            del(session['username'])
-            del(session['groups'])
-        except KeyError:
-            pass
+    aldap = Aldap()
+    if aldap.authentication(username, password):
+        logs.info({'message':'Login: Authentication successful, adding user and groups to the Session.'})
+        session['username'] = username
+        session['groups'] = aldap.getUserGroups(username)
+        return redirect(callback)
 
-    return render_template('login.html', layout=layout)
+    logs.warning({'message': 'Login: Authentication failed, invalid credentials.'})
+    session['alert'] = 'Username or password incorrect.'
+    bruteForce.addFailure()
+    return redirect('/?callback='+callback)
 
-@app.route('/', defaults={'path': ''}, methods=['GET'])
-@app.route('/<path:path>', methods=['GET'])
-def catch_all(path):
+@app.route('/auth', methods=['GET'])
+def auth():
+    logs.debug({'message':'/auth requested.'})
+
     if bruteForce.isIpBlocked():
         return 'Unauthorized', 401
 
@@ -94,6 +83,7 @@ def catch_all(path):
         username = request.authorization.username
         password = request.authorization.password
         if not username or not password:
+            bruteForce.addFailure()
             return 'Unauthorized', 401
 
         aldap = Aldap()
@@ -106,9 +96,11 @@ def catch_all(path):
                 return 'Authorized', 200, [('x-username', username),('x-groups', ",".join(matchedGroups))]
             else:
                 logs.warning({'message': 'Basic-Auth: Authorization failed.'})
+                bruteForce.addFailure()
                 return 'Unauthorized', 401
 
         logs.warning({'message': 'Basic-Auth: Authentication failed.'})
+        bruteForce.addFailure()
         return 'Unauthorized', 401
 
     # Session auth request
@@ -122,10 +114,50 @@ def catch_all(path):
             return 'Authorized', 200, [('x-username', session['username']),('x-groups', ",".join(matchedGroups))]
         else:
             logs.warning({'message': 'Session: Authorization failed.'})
+            bruteForce.addFailure()
             return 'Unauthorized', 401
 
     logs.warning({'message': 'Session: Authentication failed.'})
+    bruteForce.addFailure()
     return 'Unauthorized', 401
+
+@app.route('/logout', methods=['GET', 'POST'])
+def logout():
+    logs.debug({'message':'/logout requested.'})
+    try:
+        del(session['username'])
+        del(session['groups'])
+        session.clear()
+    except KeyError:
+        pass
+    return redirect('/')
+
+@app.route('/', defaults={'path': ''}, methods=['GET'])
+@app.route('/<path:path>', methods=['GET'])
+def catch_all(path):
+    layout = {
+        'metadata': {
+            'title': 'PMI - Data Ocean',
+            'description': '',
+            'footer': 'PSE DevOps Engineers'
+        },
+        'authenticated': False,
+        'username': '',
+        'alert': '',
+        'callback': ''
+    }
+
+    if 'alert' in session:
+        layout['alert'] = session['alert']
+        del(session['alert'])
+
+    if 'username' in session:
+        layout['authenticated'] = True
+        layout['username'] = session['username']
+
+    layout['callback'] = request.args.get('callback', default='/', type=str)
+
+    return render_template('login.html', layout=layout)
 
 @app.after_request
 def remove_header(response):
@@ -134,6 +166,6 @@ def remove_header(response):
 
 if __name__ == '__main__':
     if param.get('ENABLE_HTTPS', False, bool):
-        app.run(host='0.0.0.0', port=9000, debug=False, ssl_context='adhoc')
+        app.run(host='0.0.0.0', port=9000, debug=True, ssl_context='adhoc')
     else:
-        app.run(host='0.0.0.0', port=9000, debug=False)
+        app.run(host='0.0.0.0', port=9000, debug=True)

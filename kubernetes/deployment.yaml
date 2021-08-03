@@ -1,0 +1,51 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: another-ldap
+  namespace: another
+  labels:
+    app: another-ldap
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: another-ldap
+  template:
+    metadata:
+      labels:
+        app: another-ldap
+    spec:
+      containers:
+        - name: another-ldap
+          image: ghcr.io/dignajar/another-ldap:latest
+          imagePullPolicy: Always
+          ports:
+            - name: https
+              containerPort: 9000
+          envFrom:
+            - configMapRef:
+                name: another-ldap
+            - secretRef:
+                name: another-ldap
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+            limits:
+              cpu: 200m
+              memory: 256Mi
+          securityContext:
+            readOnlyRootFilesystem: true
+            runAsNonRoot: true
+            allowPrivilegeEscalation: false
+            runAsUser: 10001
+            capabilities:
+              drop:
+                - ALL
+          volumeMounts:
+            - name: vol-tmp
+              mountPath: /tmp
+      volumes:
+        - name: vol-tmp
+          emptyDir: {}
