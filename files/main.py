@@ -1,7 +1,7 @@
 import logging
 from os import environ
 from flask import Flask
-from flask import request, session, render_template, redirect
+from flask import request, session, render_template, redirect, url_for
 from flask_session import Session
 from datetime import timedelta
 from aldap.logs import Logs
@@ -44,11 +44,13 @@ def login():
     logs.debug({'message':'/login requested.'})
 
     # Get return page to redirect the user after successful login
+    protocol = request.args.get('protocol', default='', type=str)
     callback = request.args.get('callback', default='/', type=str)
 
+    # Check Brute Force
     if bruteForce.isIpBlocked():
         session['alert'] = 'Username or password incorrect.'
-        return redirect('/?callback='+callback)
+        return redirect(url_for('index', protocol=protocol, callback=callback))
 
     # Get inputs from the form
     username = request.form.get('username', default=None, type=str)
@@ -56,24 +58,27 @@ def login():
     if (username is None) or (password is None):
         session['alert'] = 'Username or password incorrect.'
         bruteForce.addFailure()
-        return redirect('/?callback='+callback)
+        return redirect(url_for('index', protocol=protocol, callback=callback))
 
+    # Authenticate user
     aldap = Aldap()
     if aldap.authentication(username, password):
         logs.info({'message':'Login: Authentication successful, adding user and groups to the Session.'})
         session['username'] = username
         session['groups'] = aldap.getUserGroups(username)
-        return redirect(callback)
+        return redirect(protocol+'://'+callback)
 
+    # Authentication failed
     logs.warning({'message': 'Login: Authentication failed, invalid credentials.'})
     session['alert'] = 'Username or password incorrect.'
     bruteForce.addFailure()
-    return redirect('/?callback='+callback)
+    return redirect(url_for('index', protocol=protocol, callback=callback))
 
 @app.route('/auth', methods=['GET'])
 def auth():
     logs.debug({'message':'/auth requested.'})
 
+    # Check Brute Force
     if bruteForce.isIpBlocked():
         return 'Unauthorized', 401
 
@@ -134,16 +139,17 @@ def logout():
 
 @app.route('/', defaults={'path': ''}, methods=['GET'])
 @app.route('/<path:path>', methods=['GET'])
-def catch_all(path):
+def index(path):
     layout = {
         'metadata': {
-            'title': 'PMI - Data Ocean',
-            'description': '',
-            'footer': 'PSE DevOps Engineers'
+            'title': param.get('METADATA_TITLE', 'Another LDAP', str),
+            'description': param.get('METADATA_DESCRIPTION', '', str),
+            'footer': param.get('METADATA_FOOTER', 'Powered by Another LDAP', str)
         },
         'authenticated': False,
         'username': '',
         'alert': '',
+        'protocol': '',
         'callback': ''
     }
 
@@ -151,10 +157,12 @@ def catch_all(path):
         layout['alert'] = session['alert']
         del(session['alert'])
 
-    if 'username' in session:
+    if ('username' in session) and ('groups' in session) and (not bruteForce.isIpBlocked()):
         layout['authenticated'] = True
         layout['username'] = session['username']
 
+    # Get return page to redirect the user after successful login
+    layout['protocol'] = request.args.get('protocol', default='http', type=str)
     layout['callback'] = request.args.get('callback', default='/', type=str)
 
     return render_template('login.html', layout=layout)
