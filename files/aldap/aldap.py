@@ -11,7 +11,7 @@ class Aldap:
         self.param = Parameters()
         self.logs = Logs(self.__class__.__name__)
 
-        self.ldapEndpoint = self.param.get('LDAP_ENDPOINT')
+        self.ldapEndpoint = self.param.get('LDAP_ENDPOINT', default='')
         self.searchBase = self.param.get('LDAP_SEARCH_BASE')
         self.dnUsername = self.param.get('LDAP_MANAGER_DN_USERNAME')
         self.dnPassword = self.param.get('LDAP_MANAGER_PASSWORD')

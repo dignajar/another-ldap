@@ -19,8 +19,8 @@
                         <h2>{{ layout.metadata.title }}</h2>
                     </hgroup>
                     <form action="{{ url_for('login', protocol=layout.protocol, callback=layout.callback) }}" method="POST">
-                        <input type="text" name="username" placeholder="Username" aria-label="Username" autocomplete="username" required>
-                        <input type="password" name="password" placeholder="Password" aria-label="Password" autocomplete="password" required>
+                        <input type="text" name="username" placeholder="Username" aria-label="Username" autocomplete="off" required>
+                        <input type="password" name="password" placeholder="Password" aria-label="Password" autocomplete="off" required>
                         <button type="submit" class="contrast">Login</button>
                     </form>
                 {% endif %}

@@ -34,8 +34,8 @@ class BruteForce:
             # Check if the IP expire and renew the database for that IP
             if self.database[ip]['blockUntil'] < datetime.now():
                 self.logs.debug({'message':'IP failure counter expired, removing IP...', 'ip': ip})
-                del self.database[ip]
-                self.addFailure(ip)
+                del(self.database[ip])
+                self.addFailure()
                 return False
 
             # The IP is already in the database, increase the failure counter
@@ -70,7 +70,7 @@ class BruteForce:
             # Check if the IP expire and remove from the database
             if self.database[ip]['blockUntil'] < datetime.now():
                 self.logs.warning({'message':'Removing IP from the database, lucky guy, time expired.', 'ip': ip})
-                del self.database[ip]
+                del(self.database[ip])
                 return False
             return True
 

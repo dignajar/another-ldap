@@ -8,6 +8,7 @@ Another LDAP provides Authentication and Authorization for your backend applicat
 [![codebeat badge](https://codebeat.co/badges/f57de995-ca62-49e5-b309-82ed60570324)](https://codebeat.co/projects/github-com-dignajar-another-ldap-master)
 [![release](https://img.shields.io/github/v/release/dignajar/another-ldap.svg)](https://github.com/dignajar/another-ldap/releases)
 [![license](https://img.shields.io/badge/license-MIT-green)](https://github.com/dignajar/another-ldap/blob/master/LICENSE)
+
 ## Install
 ```
 git clone https://github.com/dignajar/another-ldap.git
