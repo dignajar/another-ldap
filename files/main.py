@@ -18,7 +18,7 @@ bruteForce = BruteForce()
 
 # --- Logging -----------------------------------------------------------------
 logs = Logs('main')
-logging.getLogger('werkzeug').setLevel(logging.ERROR) # Flask log level to ERROR
+logging.getLogger('werkzeug').setLevel(logging.ERROR) # Set Flask log-level to ERROR
 
 # --- Flask -------------------------------------------------------------------
 app = Flask(__name__)
@@ -145,8 +145,12 @@ def index():
     # Get return page to redirect the user after successful login
     layout['protocol'] = request.args.get('protocol', default='', type=str)
     layout['callback'] = request.args.get('callback', default='', type=str)
+
+    # Alerts for the user UI
     if 'alert' in request.args:
-        layout['alert'] = 'Invalid username or password.'
+        layout['alert'] = 'Authentication failed, invalid username or password.'
+    if layout['authenticated'] and layout['protocol'] and layout['callback']:
+        layout['alert'] = 'Authorization failed, invalid LDAP groups.'
 
     return render_template('login.html', layout=layout)
 
