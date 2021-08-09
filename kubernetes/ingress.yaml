@@ -9,7 +9,7 @@ metadata:
     nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
 spec:
   rules:
-  - host: login.testmyldap.com
+  - host: another-ldap.testmyldap.com
     http:
       paths:
       - path: /
