@@ -3,6 +3,8 @@ Another LDAP is a form-based authentication for Active Directory / LDAP server.
 
 Another LDAP provides Authentication and Authorization for your applications running on Kubernetes.
 
+**Another LDAP** works perfect with **NGINX ingress controller** via ([External OAUTH Authentication](https://kubernetes.github.io/ingress-nginx/examples/auth/oauth-external-auth/)), **HAProxy** ([haproxy-auth-request](https://github.com/TimWolla/haproxy-auth-request)) or any webserver/reverse proxy with authorization based on the result of a subrequest.
+
 [![Docker image](https://img.shields.io/badge/Docker-image-blue.svg)](https://github.com/dignajar/another-ldap/pkgs/container/another-ldap)
 [![Kubernetes YAML manifests](https://img.shields.io/badge/Kubernetes-manifests-blue.svg)](https://github.com/dignajar/another-ldap/tree/master/kubernetes)
 [![codebeat badge](https://codebeat.co/badges/f57de995-ca62-49e5-b309-82ed60570324)](https://codebeat.co/projects/github-com-dignajar-another-ldap-master)
