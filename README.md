@@ -15,10 +15,9 @@ Another LDAP provides Authentication and Authorization for your applications run
 
 ## Features
 - Authentication and Authorization for applications.
-- Authorization via LDAP groups.
-- Supports regex in groups.
-- Supports `ldap` and `ldaps` servers.
-- Supports TLS via self-signed certificate.
+- Authorization via LDAP groups, supports regex in groups list.
+- Supports protocols `ldap://` and `ldaps://`.
+- Enabled by design TLS via self-signed certificate.
 - Supports configuration via headers or via environment variables.
 - HTTP response headers with username and matched groups for the backend.
 - Brute force protection.
@@ -130,7 +129,7 @@ spec:
 ```
 
 ## Available parameters
-All parameters are defined in the config-map and secret from the Kubernetes manifests.
+All parameters are defined in the config-map and secret manifests.
 
 All values type are `string`.
 
@@ -138,7 +137,7 @@ The parameter `LDAP_SEARCH_FILTER` supports variable expansion with the username
 
 The parameter `LDAP_BIND_DN` supports variable expansion with the username, you can do something like this `{username}@TESTMYLDAP.com` or `UID={username},OU=PEOPLE,DC=TESTMYLDAP,DC=COM` and `{username}` is going to be replaced by the username typed in the login form.
 
-The parameter `COOKIE_DOMAIN` define the scope of the cookie, for example if you need to authentication/authorizate the domain `testmyldap.com` you should set `.testmyldap.com` in this parameter.
+The parameter `COOKIE_DOMAIN` define the scope of the cookie, for example if you need to authentication/authorizate the domain `testmyldap.com` you should set the wildcard `.testmyldap.com` (notice the dot at the beginning).
 ## Supported HTTP request headers
 The variables send via HTTP headers take precedence over environment variables.
 - `Ldap-Allowed-Users`

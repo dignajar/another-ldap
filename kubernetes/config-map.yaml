@@ -5,7 +5,6 @@ metadata:
   name: another-ldap
   namespace: another
 data:
-  ENABLE_HTTPS: "True"
   LDAP_ENDPOINT: "ldaps://testmyldap.com:636"
   LDAP_MANAGER_DN_USERNAME: "CN=john,OU=Administrators,DC=TESTMYLDAP,DC=COM"
   LDAP_BIND_DN: "{username}@TESTMYLDAP.com"

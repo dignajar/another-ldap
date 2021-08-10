@@ -33,7 +33,7 @@ SESSION_USE_SIGNER = True
 SESSION_COOKIE_NAME = 'another-ldap'
 SESSION_COOKIE_DOMAIN = param.get('COOKIE_DOMAIN', None)
 SESSION_COOKIE_HTTPONLY = True
-SESSION_COOKIE_SECURE = param.get('ENABLE_HTTPS', False, bool)
+SESSION_COOKIE_SECURE = True
 PERMANENT_SESSION_LIFETIME = timedelta(days=7)
 SESSION_COOKIE_SAMESITE = 'Lax'
 app.config.from_object(__name__)
@@ -169,6 +169,7 @@ def afterAll(response):
         session.clear() # Remove Session file and cookie
     response.headers['Server'] = '' # Remove Server header
     response.headers['X-Frame-Options'] = 'SAMEORIGIN'
+    response.headers['Strict-Transport-Security'] = 'max-age=31536000; includeSubDomains'
     return response
 
 @app.errorhandler(HTTPException)
@@ -177,7 +178,4 @@ def handle_exception(e):
     return 'Not Found', 404
 
 if __name__ == '__main__':
-    if param.get('ENABLE_HTTPS', False, bool):
-        app.run(host='0.0.0.0', port=9000, ssl_context='adhoc', debug=False, use_reloader=False)
-    else:
-        app.run(host='0.0.0.0', port=9000, debug=False, use_reloader=False)
+    app.run(host='0.0.0.0', port=9000, ssl_context='adhoc', debug=False, use_reloader=False)
