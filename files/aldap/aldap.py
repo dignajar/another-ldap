@@ -88,7 +88,7 @@ class Aldap:
     def __findMatch__(self, group:str, adGroup:str):
         try:
             # Extract the Common Name from the string (letters, spaces, underscores and hyphens)
-            adGroup = re.search('(?i)CN=((\w*\s?_?-?)*)', adGroup).group(1)
+            adGroup = re.search(r'(?i)CN=((\w*\s?_?-?)*)', adGroup).group(1)
         except Exception as e:
             self.logs.warning({'message':'There was an error trying to search CN: %s' % e})
             return None
