@@ -187,7 +187,6 @@ class Aldap:
             validAllowedGroups, matchedGroups = self.validateAllowedGroups(username, groups, self.allowedGroups, self.condGroups)
             if validAllowedGroups:
                 return True, matchedGroups
-            else:
-                return False, []
+            return False, []
 
         return True, []

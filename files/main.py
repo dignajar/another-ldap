@@ -87,12 +87,13 @@ def auth():
             logs.info({'message':'Basic-Auth: Authentication successful.'})
             groups = aldap.getUserGroups(username)
             authorization, matchedGroups = aldap.authorization(username, groups)
+
             if authorization:
                 logs.info({'message':'Basic-Auth: Authorization successful.'})
                 return 'Authorized', 200, [('x-username', username),('x-groups', ",".join(matchedGroups))]
-            else:
-                logs.warning({'message': 'Basic-Auth: Authorization failed.'})
-                return 'Unauthorized', 401
+
+            logs.warning({'message': 'Basic-Auth: Authorization failed.'})
+            return 'Unauthorized', 401
 
         logs.warning({'message': 'Basic-Auth: Authentication failed.'})
         return 'Unauthorized', 401
@@ -103,12 +104,13 @@ def auth():
         logs.info({'message':'Session: Authentication successful.'})
         aldap = Aldap()
         authorization, matchedGroups = aldap.authorization(session['username'], session['groups'])
+
         if authorization:
             logs.info({'message':'Session: Authorization successful.'})
             return 'Authorized', 200, [('x-username', session['username']),('x-groups', ",".join(matchedGroups))]
-        else:
-            logs.warning({'message': 'Session: Authorization failed.'})
-            return 'Unauthorized', 401
+
+        logs.warning({'message': 'Session: Authorization failed.'})
+        return 'Unauthorized', 401
 
     logs.warning({'message': 'Session: Authentication failed.'})
     return 'Unauthorized', 401
