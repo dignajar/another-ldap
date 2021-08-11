@@ -5,6 +5,7 @@ from flask import request, session, render_template, redirect, url_for
 from flask_session import Session
 from werkzeug.exceptions import HTTPException
 from datetime import timedelta
+from tempfile import gettempdir
 from aldap.logs import Logs
 from aldap.bruteforce import BruteForce
 from aldap.parameters import Parameters
@@ -28,7 +29,7 @@ app.config.update(
 
 # Flask-Session module
 SESSION_TYPE = 'filesystem'
-SESSION_FILE_DIR = '/tmp/'
+SESSION_FILE_DIR = gettempdir()
 SESSION_USE_SIGNER = True
 SESSION_COOKIE_NAME = 'another-ldap'
 SESSION_COOKIE_DOMAIN = param.get('COOKIE_DOMAIN', None)
