@@ -16,6 +16,7 @@ spec:
       labels:
         app: another-ldap
     spec:
+      automountServiceAccountToken: false
       containers:
         - name: another-ldap
           image: ghcr.io/dignajar/another-ldap:latest
