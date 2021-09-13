@@ -6,6 +6,14 @@ class HTTP:
         '''
             Returns the request IP
         '''
+
+        # Nginx Ingress Controller returns the X-Forwarded-For in X-Original-Forwarded-For
+        # The last IP from the list is the client IP
+        if request.environ.get('HTTP_X_ORIGINAL_FORWARDED_FOR') is not None:
+            nginxControllerIP = request.environ.get('HTTP_X_ORIGINAL_FORWARDED_FOR')
+            nginxControllerIP = [x.strip() for x in nginxControllerIP.split(',')]
+            return nginxControllerIP[-1]
+
         if request.environ.get('HTTP_X_REAL_IP') is not None:
             return request.environ.get('HTTP_X_REAL_IP')
 
