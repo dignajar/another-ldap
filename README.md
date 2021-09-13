@@ -24,7 +24,9 @@ Another LDAP provides Authentication and Authorization for your applications run
 - Log format in Plain-Text or JSON.
 
 ## Installation
-Clone this repository or download the manifests from the directory `kubernetes`. Edit the ingress, config-map and secrets with your configuration. ALDAP is installed in the namespace `another`.
+- Clone this repository or download the manifests from the directory `kubernetes`.
+- Edit the ingress, config-map and secrets with your configuration.
+- ALDAP is installed in the namespace `another`.
 
 ```
 git clone https://github.com/dignajar/another-ldap.git
@@ -33,6 +35,8 @@ kubectl apply -f .
 ```
 
 ## Configuration
+
+### Example 1: Authentication
 The following example provides authentication for the application `my-app`.
 - The authentication validates username and password.
 
@@ -61,6 +65,7 @@ spec:
           servicePort: 80
 ```
 
+### Example 2: Authentication and Authorization
 The following example provides authentication and authorization for the application `my-app`.
 - The authentication validates username and password.
 - The authorization validates if the user has the LDAP group `DevOps production environment`.
@@ -92,6 +97,7 @@ spec:
           servicePort: 80
 ```
 
+### Example 3: Authentication, Authorization and response headers
 The following example provides authentication and authorization for the application `my-app` and calls the application with the headers `x-username` and `x-groups`.
 - The authentication validates username and password.
 - The authorization validates if the user has one of the following LDAP groups `DevOps production environment` or `DevOps QA environment`.
