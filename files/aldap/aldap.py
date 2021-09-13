@@ -22,9 +22,9 @@ class Aldap:
         self.condGroups = self.param.get('LDAP_CONDITIONAL_GROUPS', default='or', type=str, onlyEnv=False)
         self.condUsersGroups = self.param.get('LDAP_CONDITIONAL_USERS_GROUPS', default='or', type=str, onlyEnv=False)
         if self.allowedUsers is not None:
-            self.allowedUsers = self.allowedUsers.split(',') # Convert string to list
+            self.allowedUsers = [x.strip() for x in self.allowedUsers.split(',')] # Convert string to list and trim each item
         if self.allowedGroups is not None:
-            self.allowedGroups = self.allowedGroups.split(',') # Convert string to list
+            self.allowedGroups = [x.strip() for x in self.allowedGroups.split(',')] # Convert string to list and trim each item
 
     def connect(self):
         '''
