@@ -1,4 +1,5 @@
-flask
-Flask-Session
-pyopenssl
-python-ldap
+flask==2.0.1
+Flask-Session==0.4.0
+pyopenssl==20.0.1
+python-ldap==3.3.1
+cachelib==0.2.0
