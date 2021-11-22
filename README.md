@@ -60,9 +60,12 @@ spec:
     http:
       paths:
       - path: /
+        pathType: Prefix
         backend:
-          serviceName: my-app
-          servicePort: 80
+          service:
+            name: my-app
+            port:
+              number: 80
 ```
 
 ### Example 2: Authentication and Authorization
@@ -92,9 +95,12 @@ spec:
     http:
       paths:
       - path: /
+        pathType: Prefix
         backend:
-          serviceName: my-app
-          servicePort: 80
+          service:
+            name: my-app
+            port:
+              number: 80
 ```
 
 ### Example 3: Authentication, Authorization and response headers
@@ -129,9 +135,12 @@ spec:
     http:
       paths:
       - path: /
+        pathType: Prefix
         backend:
-          serviceName: my-app
-          servicePort: 80
+          service:
+            name: my-app
+            port:
+              number: 80
 ```
 
 ## Available parameters
@@ -144,6 +153,7 @@ The parameter `LDAP_SEARCH_FILTER` supports variable expansion with the username
 The parameter `LDAP_BIND_DN` supports variable expansion with the username, you can do something like this `{username}@TESTMYLDAP.com` or `UID={username},OU=PEOPLE,DC=TESTMYLDAP,DC=COM` and `{username}` is going to be replaced by the username typed in the login form.
 
 The parameter `COOKIE_DOMAIN` define the scope of the cookie, for example if you need to authentication/authorizate the domain `testmyldap.com` you should set the wildcard `.testmyldap.com` (notice the dot at the beginning).
+
 ## Supported HTTP request headers
 The variables send via HTTP headers take precedence over environment variables.
 - `Ldap-Allowed-Users`
