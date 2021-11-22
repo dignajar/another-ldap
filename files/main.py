@@ -19,7 +19,7 @@ bruteForce = BruteForce()
 
 # --- Logging -----------------------------------------------------------------
 logs = Logs('main')
-logging.getLogger('werkzeug').setLevel(logging.ERROR) # Set Flask log-level to ERROR
+#logging.getLogger('werkzeug').setLevel(logging.ERROR) # Set Flask log-level to ERROR
 
 # --- Flask -------------------------------------------------------------------
 app = Flask(__name__)
@@ -35,7 +35,7 @@ SESSION_COOKIE_NAME = 'another-ldap'
 SESSION_COOKIE_DOMAIN = param.get('COOKIE_DOMAIN', None)
 SESSION_COOKIE_HTTPONLY = True
 SESSION_COOKIE_SECURE = True
-PERMANENT_SESSION_LIFETIME = timedelta(days=7)
+PERMANENT_SESSION_LIFETIME = timedelta(days=param.get('PERMANENT_SESSION_LIFETIME', 7, int))
 SESSION_COOKIE_SAMESITE = 'Lax'
 app.config.from_object(__name__)
 Session(app)
@@ -74,6 +74,8 @@ def login():
 @app.route('/auth', methods=['GET'])
 def auth():
     logs.debug({'message':'/auth requested.'})
+
+    print(request.cookies)
 
     # Basic Auth request
     if request.authorization:
