@@ -1,5 +1,5 @@
 ---
-apiVersion: networking.k8s.io/v1beta1
+apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   namespace: another
@@ -13,6 +13,9 @@ spec:
     http:
       paths:
       - path: /
+        pathType: Prefix
         backend:
-          serviceName: another-ldap
-          servicePort: 443
+          service:
+            name: another-ldap
+            port:
+              number: 443
