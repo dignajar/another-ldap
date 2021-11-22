@@ -75,8 +75,6 @@ def login():
 def auth():
     logs.debug({'message':'/auth requested.'})
 
-    print(request.cookies)
-
     # Basic Auth request
     if request.authorization:
         logs.debug({'message':'Basic-Auth requested.'})
