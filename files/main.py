@@ -10,6 +10,7 @@ from aldap.logs import Logs
 from aldap.bruteforce import BruteForce
 from aldap.parameters import Parameters
 from aldap.aldap import Aldap
+from aldap.prometheus import Prometheus
 
 # --- Parameters --------------------------------------------------------------
 param = Parameters()
@@ -40,6 +41,7 @@ SESSION_COOKIE_SAMESITE = 'Lax'
 app.config.from_object(__name__)
 Session(app)
 
+
 # --- Routes ------------------------------------------------------------------
 @app.route('/login', methods=['POST'])
 def login():
@@ -60,6 +62,8 @@ def login():
     aldap = Aldap()
     if aldap.authentication(username, password):
         logs.info({'message':'Login: Authentication successful, adding user and groups to the Session.'})
+        prometheus = Prometheus()
+        prometheus.addLastConnection(username)
         session['username'] = username
         session['groups'] = aldap.getUserGroups(username)
         if (protocol in ['http', 'https']) and callback:
@@ -70,6 +74,7 @@ def login():
     logs.warning({'message': 'Login: Authentication failed, invalid credentials.'})
     bruteForce.addFailure()
     return redirect(url_for('index', protocol=protocol, callback=callback, alert=True))
+
 
 @app.route('/auth', methods=['GET'])
 def auth():
@@ -91,6 +96,8 @@ def auth():
 
             if authorization:
                 logs.info({'message':'Basic-Auth: Authorization successful.'})
+                prometheus = Prometheus()
+                prometheus.addLastConnection(username)
                 return 'Authorized', 200, [('x-username', username),('x-groups', ",".join(matchedGroups))]
 
             logs.warning({'message': 'Basic-Auth: Authorization failed.'})
@@ -108,6 +115,8 @@ def auth():
 
         if authorization:
             logs.info({'message':'Session: Authorization successful.'})
+            prometheus = Prometheus()
+            prometheus.addLastConnection(session['username'])
             return 'Authorized', 200, [('x-username', session['username']),('x-groups', ",".join(matchedGroups))]
 
         logs.warning({'message': 'Session: Authorization failed.'})
@@ -115,6 +124,7 @@ def auth():
 
     logs.warning({'message': 'Session: Authentication failed.'})
     return 'Unauthorized', 401
+
 
 @app.route('/logout', methods=['GET', 'POST'])
 def logout():
@@ -124,6 +134,7 @@ def logout():
     except KeyError:
         pass
     return redirect(url_for('index'))
+
 
 @app.route('/', methods=['GET'])
 def index():
@@ -157,11 +168,13 @@ def index():
 
     return render_template('login.html', layout=layout)
 
+
 @app.before_request
 def beforeAll():
     logs.debug({'message':'Before-all.'})
     if bruteForce.isIpBlocked():
         return 'Unauthorized', 401
+
 
 @app.after_request
 def afterAll(response):
@@ -175,10 +188,12 @@ def afterAll(response):
     response.headers['Strict-Transport-Security'] = 'max-age=31536000; includeSubDomains'
     return response
 
+
 @app.errorhandler(HTTPException)
 def handle_exception(e):
     logs.error({'message': 'Exception.', 'code': e.code, 'name': e.name, 'description': e.description})
     return 'Not Found', 404
+
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=9000, ssl_context='adhoc', debug=False, use_reloader=False)
