@@ -1,5 +1,3 @@
-import logging
-from os import environ
 from flask import Flask
 from flask import request, session, render_template, redirect, url_for
 from flask_session import Session
@@ -20,7 +18,6 @@ bruteForce = BruteForce()
 
 # --- Logging -----------------------------------------------------------------
 logs = Logs('main')
-#logging.getLogger('werkzeug').setLevel(logging.ERROR) # Set Flask log-level to ERROR
 
 # --- Flask -------------------------------------------------------------------
 app = Flask(__name__)
