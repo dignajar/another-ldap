@@ -132,6 +132,7 @@ def index():
         'metadata': {
             'title': param.get('METADATA_TITLE', 'Another LDAP', str),
             'description': param.get('METADATA_DESCRIPTION', '', str),
+            'login_image': param.get('METADATA_LOGIN_IMAGE', None, str),
             'footer': param.get('METADATA_FOOTER', 'Powered by Another LDAP', str)
         },
         'authenticated': False,
