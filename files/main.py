@@ -123,7 +123,11 @@ def logout():
         session.clear()
     except KeyError:
         pass
-    return redirect(url_for('index'))
+    # Get return page to redirect the user after successful logout
+    protocol = request.args.get('protocol', default='', type=str)
+    callback = request.args.get('callback', default='', type=str)
+    return redirect(url_for('index', protocol=protocol, callback=callback, alert=False))
+    # return redirect(url_for('index'))
 
 @app.route('/', methods=['GET'])
 def index():
