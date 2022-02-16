@@ -3,6 +3,7 @@ from datetime import datetime, timezone
 from aldap.http import HTTP
 from aldap.parameters import Parameters
 
+
 class Logs:
 
     def __init__(self, objectName:str, includeRequestIP:bool=True):
@@ -13,7 +14,6 @@ class Logs:
         self.level = self.param.get('LOG_LEVEL', default='INFO')
         self.format = self.param.get('LOG_FORMAT', default='JSON')
         self.includeRequestIP = includeRequestIP
-
 
     def __print__(self, level:str, extraFields:dict):
         fields = {
@@ -37,21 +37,17 @@ class Logs:
         else:
             print(' - '.join(map(str, fields.values())))
 
-
     def error(self, extraFields:dict=None):
         if self.level in ['DEBUG', 'INFO', 'WARNING', 'ERROR']:
             self.__print__('ERROR', extraFields)
-
 
     def warning(self, extraFields:dict=None):
         if self.level in ['DEBUG', 'INFO', 'WARNING']:
             self.__print__('WARNING', extraFields)
 
-
     def info(self, extraFields:dict=None):
         if self.level in ['DEBUG', 'INFO']:
             self.__print__('INFO', extraFields)
-
 
     def debug(self, extraFields:dict=None):
         if self.level in ['DEBUG']:

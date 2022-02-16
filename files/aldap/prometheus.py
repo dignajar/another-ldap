@@ -3,8 +3,8 @@ from datetime import datetime
 from aldap.parameters import Parameters
 from aldap.logs import Logs
 
-class Prometheus:
 
+class Prometheus:
 
     def __init__(self):
         self.param = Parameters()
