@@ -130,7 +130,13 @@ def logout():
         session.clear()
     except KeyError:
         pass
-    return redirect(url_for('index'))
+    # Get return page to redirect the user after successful logout
+    protocol = request.args.get('protocol', default='', type=str)
+    callback = request.args.get('callback', default='', type=str)
+    if (protocol or callback):
+        return redirect(url_for('index', protocol=protocol, callback=callback, alert=False))
+    else:
+        return redirect(url_for('index'))
 
 
 @app.route('/', methods=['GET'])
@@ -140,6 +146,7 @@ def index():
         'metadata': {
             'title': param.get('METADATA_TITLE', 'Another LDAP', str),
             'description': param.get('METADATA_DESCRIPTION', '', str),
+            'login_image': param.get('METADATA_LOGIN_IMAGE', None, str),
             'footer': param.get('METADATA_FOOTER', 'Powered by Another LDAP', str)
         },
         'authenticated': False,

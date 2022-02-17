@@ -1,4 +1,5 @@
 # Another LDAP
+
 Another LDAP is a form-based authentication for Active Directory / LDAP server.
 
 Another LDAP provides Authentication and Authorization for your applications running on Kubernetes.
@@ -14,6 +15,7 @@ Another LDAP provides Authentication and Authorization for your applications run
 ![Alt text](another-ldap.png?raw=true "Another LDAP")
 
 ## Features
+
 - Authentication and Authorization for applications.
 - Authorization via LDAP groups, supports regex in groups list.
 - Supports protocols `ldap://` and `ldaps://`.
@@ -24,6 +26,7 @@ Another LDAP provides Authentication and Authorization for your applications run
 - Log format in Plain-Text or JSON.
 
 ## Installation
+
 - Clone this repository or download the manifests from the directory `kubernetes`.
 - Edit the ingress, config-map and secrets with your configuration.
 - ALDAP is installed in the namespace `another`.
@@ -37,7 +40,9 @@ kubectl apply -f .
 ## Configuration
 
 ### Example 1: Authentication
+
 The following example provides authentication for the application `my-app`.
+
 - The authentication validates username and password.
 
 ```
@@ -54,6 +59,9 @@ metadata:
       location @login {
         return 302 https://another-ldap.testmyldap.com/?protocol=$pass_access_scheme&callback=$host;
       }
+      location /logout {
+        return 302 https://another-ldap.testmyldap.com/logout?protocol=$pass_access_scheme&callback=$host;
+      }
 spec:
   rules:
   - host: my-app.testmyldap.com
@@ -69,7 +77,9 @@ spec:
 ```
 
 ### Example 2: Authentication and Authorization
+
 The following example provides authentication and authorization for the application `my-app`.
+
 - The authentication validates username and password.
 - The authorization validates if the user has the LDAP group `DevOps production environment`.
 
@@ -89,6 +99,9 @@ metadata:
       location @login {
         return 302 https://another-ldap.testmyldap.com/?protocol=$pass_access_scheme&callback=$host;
       }
+      location /logout {
+        return 302 https://another-ldap.testmyldap.com/logout?protocol=$pass_access_scheme&callback=$host;
+      }
 spec:
   rules:
   - host: my-app.testmyldap.com
@@ -104,7 +117,9 @@ spec:
 ```
 
 ### Example 3: Authentication, Authorization and response headers
+
 The following example provides authentication and authorization for the application `my-app` and calls the application with the headers `x-username` and `x-groups`.
+
 - The authentication validates username and password.
 - The authorization validates if the user has one of the following LDAP groups `DevOps production environment` or `DevOps QA environment`.
 - Nginx will return the header `x-username` to the application that contains the username authenticated.
@@ -129,6 +144,9 @@ metadata:
       location @login {
         return 302 https://another-ldap.testmyldap.com/?protocol=$pass_access_scheme&callback=$host;
       }
+      location /logout {
+        return 302 https://another-ldap.testmyldap.com/logout?protocol=$pass_access_scheme&callback=$host;
+      }
 spec:
   rules:
   - host: my-app.testmyldap.com
@@ -144,6 +162,7 @@ spec:
 ```
 
 ## Available parameters
+
 All parameters are defined in the config-map and secret manifests.
 
 All values type are `string`.
@@ -155,12 +174,15 @@ The parameter `LDAP_BIND_DN` supports variable expansion with the username, you 
 The parameter `COOKIE_DOMAIN` define the scope of the cookie, for example if you need to authentication/authorizate the domain `testmyldap.com` you should set the wildcard `.testmyldap.com` (notice the dot at the beginning).
 
 ## Supported HTTP request headers
+
 The variables send via HTTP headers take precedence over environment variables.
+
 - `Ldap-Allowed-Users`
 - `Ldap-Allowed-Groups`
 - `Ldap-Conditional-Groups`: Default=`"or"`
 - `Ldap-Conditional-Users-Groups`: Default=`"or"`
 
 ## HTTP response headers
+
 - `x-username` Contains the authenticated username
 - `x-groups` Contains the user's matches groups
